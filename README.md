@@ -40,6 +40,7 @@ There is no documentation yet and you shouldn't download Twitch IRC from here.
 - Host
 - Join
 - Mod
+- Mods
 - Part
 - Ping
 - R9KBeta
