@@ -1,11 +1,18 @@
-# WORK IN PROGRESS
+**WORK IN PROGRESS**
 
-## DO NOT DOWNLOAD TWITCH-IRC FROM HERE
-This is still a work in progress and there is no documentation available yet.
-If you still want to download Twitch-IRC, download the [yeoman generator](https://github.com/Schmoopiie/generator-twitch-irc) instead.
+This is a work in progress. There is no documentation available yet.
 
-### Events:
+## Twitch-IRC [![Build Status](https://secure.travis-ci.org/Schmoopiie/generator-twitch-irc.png?branch=master)](https://travis-ci.org/Schmoopiie/generator-twitch-irc)
 
+![](http://i.imgur.com/kXbjWmX.png)
+Twitch is a trademark or registered trademark of Twitch Interactive, Inc. in the U.S. and/or other countries. "Twitch-IRC" is not operated by, sponsored by, or affiliated with Twitch Interactive, Inc. in any way.
+
+### Getting Started
+
+You must download Twitch-IRC using Yeoman Generator. Please visit [generator-twitch-irc](https://github.com/Schmoopiie/generator-twitch-irc) to get started.
+
+**Events**
+```
 - Action
 - Chat
 - Clearchat
@@ -33,9 +40,10 @@ If you still want to download Twitch-IRC, download the [yeoman generator](https:
 - Timeout
 - Unhost
 - Usercolor
+```
 
-### Commands:
-
+**Commands**
+```
 - Ban
 - Clear
 - Commercial
@@ -56,6 +64,7 @@ If you still want to download Twitch-IRC, download the [yeoman generator](https:
 - Unban
 - Unhost
 - Unmod
+```
 
 ## License
 
