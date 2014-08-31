@@ -4,7 +4,7 @@ This is a work in progress. There is no documentation available yet.
 
 ## Twitch-IRC [![Build Status](https://secure.travis-ci.org/Schmoopiie/generator-twitch-irc.png?branch=master)](https://travis-ci.org/Schmoopiie/generator-twitch-irc)
 
-![](http://i.imgur.com/kXbjWmX.png)
+![](http://i.imgur.com/Av3ArZe.png)
 Twitch is a trademark or registered trademark of Twitch Interactive, Inc. in the U.S. and/or other countries. "Twitch-IRC" is not operated by, sponsored by, or affiliated with Twitch Interactive, Inc. in any way.
 
 ### Getting Started
