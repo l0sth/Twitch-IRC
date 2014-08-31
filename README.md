@@ -1,6 +1,8 @@
 # WORK IN PROGRESS
 
-There is no documentation yet and you shouldn't download Twitch IRC from here.
+## DO NOT DOWNLOAD TWITCH-IRC FROM HERE
+This is still a work in progress and there is no documentation available yet.
+If you still want to download Twitch-IRC, download the [yeoman generator](https://github.com/Schmoopiie/generator-twitch-irc) instead.
 
 ### Events:
 
