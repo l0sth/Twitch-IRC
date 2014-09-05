@@ -28,7 +28,7 @@
  * @package  Twitch-IRC
  * @author   Schmoopiie
  * @license  http://opensource.org/licenses/MIT - The MIT License (MIT)
- * @link     http://wwww.schmoopiie.com
+ * @link     http://www.schmoopiie.com
  * @since    version 1.0
  */
 

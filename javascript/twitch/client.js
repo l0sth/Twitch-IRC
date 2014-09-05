@@ -28,7 +28,7 @@
  * @package  Twitch-IRC
  * @author   Schmoopiie
  * @license  http://opensource.org/licenses/MIT - The MIT License (MIT)
- * @link     http://wwww.schmoopiie.com
+ * @link     http://www.schmoopiie.com
  * @since    version 1.0
  */
 
@@ -89,6 +89,10 @@ util.inherits(client, events.EventEmitter);
  * @fires client#emoteset
  * @fires client#timeout
  * @fires client#clearchat
+ * @fires client#roomban
+ * @fires client#roomchanged
+ * @fires client#roomdeleted
+ * @fires client#roominvite
  * @fires client#unhost
  * @fires client#hosting
  * @fires client#twitchnotify
@@ -351,8 +355,52 @@ client.prototype._handleMessage = function _handleMessage(message) {
                  * @params {string} username
                  */
                     case (message.params[1].split(' ')[0] === 'CLEARCHAT'):
-                        if (username) { self.emit('timeout', message.params[0], username); }
-                        else { self.emit('clearchat', message.params[0]); }
+                        if (username) {
+                            self.logger.event('timeout');
+                            self.emit('timeout', message.params[0], username);
+                        }
+                        else {
+                            self.logger.event('clearchat');
+                            self.emit('clearchat', message.params[0]);
+                        }
+                        break;
+
+                /**
+                 * ROOMBAN message sent by JTV.
+                 * @event roomban
+                 * @params {string} room
+                 * @params {string} username
+                 */
+                    case (message.params[1].split(' ')[0] === 'ROOMBAN'):
+                        self.emit('roomban', message.params[0], username);
+                        break;
+
+                /**
+                 * ROOMCHANGED message sent by JTV.
+                 * @event roomchanged
+                 * @params {string} channel
+                 */
+                    case (message.params[1].split(' ')[0] === 'ROOMCHANGED'):
+                        self.emit('roomchanged', message.params[0]);
+                        break;
+
+                /**
+                 * ROOMDELETED message sent by JTV.
+                 * @event roomdeleted
+                 * @params {string} room
+                 */
+                    case (message.params[1].split(' ')[0] === 'ROOMDELETED'):
+                        self.emit('roomdeleted', message.params[0]);
+                        break;
+
+                /**
+                 * ROOMINVITE message sent by JTV.
+                 * @event roominvite
+                 * @params {string} room
+                 * @params {string} by username
+                 */
+                    case (message.params[1].split(' ')[0] === 'ROOMINVITE'):
+                        self.emit('roominvite', message.params[0], username);
                         break;
 
                 /**
