@@ -33,6 +33,10 @@ You must download Twitch-IRC using Yeoman Generator. Please visit [generator-twi
 - Ping
 - Pong
 - R9KBeta
+- Roomban
+- Roomchanged
+- Roomdeleted
+- Roominvite
 - Slowmode
 - Specialuser
 - Subscriber
