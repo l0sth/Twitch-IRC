@@ -294,19 +294,28 @@ client.prototype._handleMessage = function _handleMessage(message) {
                  * @event limitation
                  * @params {object} err
                  */
-                    case (message.params[1] === 'Host target cannot be changed more than three times per 30 minutes.'):
+                    case (message.params[1] === 'Host target cannot be changed more than three times per 30 minutes.') ||
+                    message.params[1] === 'UNAUTHORIZED JOIN':
                         self.logger.event('limitation');
-                        self.emit('limitation', {message:message.params[1], code:'CANNOT_HOST'});
+                        var code;
+                        if (message.params[1] === 'Host target cannot be changed more than three times per 30 minutes.') { code = 'CANNOT_HOST'; }
+                        else if (message.params[1] === 'UNAUTHORIZED JOIN') { code = 'CANNOT_HOST'; }
+                        self.emit('limitation', {message: message.params[1], code: code});
                         break;
 
                 /**
                  * Encountered some kind of permission problems.
                  * @event permission
-                 * @params {string} reason
+                 * @params {object} err
                  */
-                    case (message.params[1] === 'You don\'t have permission to do this.' || s(message.params[1]).contains('Only the owner of this channel can use')):
+                    case (message.params[1] === 'You don\'t have permission to do this.' || s(message.params[1]).contains('Only the owner of this channel can use')) ||
+                    message.params[1] === 'You don\'t have permission to timeout people in this room.':
                         self.logger.event('permission');
-                        self.emit('permission', message.params[1]);
+                        var code;
+                        if (message.params[1] === 'You don\'t have permission to do this.') { code = 'NO_PERMISSION'; }
+                        else if (s(message.params[1]).contains('Only the owner of this channel can use')) { code = 'OWNER_ONLY'; }
+                        else if (message.params[1] === 'You don\'t have permission to timeout people in this room.') { code = 'NO_PERMISSION'; }
+                        self.emit('permission', {message: message.params[1], code: code});
                         break;
 
                 /**
