@@ -39,6 +39,8 @@ var util = require('util');
 var servers = require('./servers');
 var data = require('./data');
 var s = require('string');
+var locallydb = require('locallydb');
+var db = new locallydb('./database');
 
 /**
  * Represents a new IRC client.
@@ -108,30 +110,30 @@ client.prototype._handleMessage = function _handleMessage(message) {
     if (message.prefix.indexOf('@') >= 0) { messageFrom = message.parseHostmaskFromPrefix().nickname; }
 
     switch(message.command) {
-    /**
-     * Received PING from server.
-     * @event ping
-     */
         case 'PING':
+            /**
+             * Received PING from server.
+             * @event ping
+             */
             self.logger.event('ping');
             self.emit('ping');
             self.socket.crlfWrite('PONG');
             break;
 
-    /**
-     * Received PONG from server.
-     * @event pong
-     */
         case 'PONG':
+            /**
+             * Received PONG from server.
+             * @event pong
+             */
             self.logger.event('pong');
             self.emit('pong');
             break;
 
-    /**
-     * Received MOTD from server.
-     * @event connected
-     */
         case '372':
+            /**
+             * Received MOTD from server.
+             * @event connected
+             */
             self.logger.event('connected');
             self.emit('connected', self.socket.remoteAddress, self.socket.remotePort);
             self.socket.crlfWrite('TWITCHCLIENT 3');
@@ -142,34 +144,34 @@ client.prototype._handleMessage = function _handleMessage(message) {
             });
             break;
 
-    /**
-     * User has joined a channel.
-     * @event join
-     * @params {string} channel
-     * @params {string} username
-     */
         case 'JOIN':
+            /**
+             * User has joined a channel.
+             * @event join
+             * @params {string} channel
+             * @params {string} username
+             */
             self.logger.event('join');
             self.emit('join', message.params[0], message.parseHostmaskFromPrefix().nickname);
             break;
 
-    /**
-     * User has left a channel.
-     * @event part
-     * @params {string} channel
-     * @params {string} username
-     */
         case 'PART':
+            /**
+             * User has left a channel.
+             * @event part
+             * @params {string} channel
+             * @params {string} username
+             */
             self.logger.event('part');
             self.emit('part', message.params[0], message.parseHostmaskFromPrefix().nickname);
             break;
 
-    /**
-     * Received a notice from the server.
-     * @event disconnected
-     * @params {string} reason
-     */
         case 'NOTICE':
+            /**
+             * Received a notice from the server.
+             * @event disconnected
+             * @params {string} reason
+             */
             if (message.prefix === 'tmi.twitch.tv') {
                 if (message.params[1] === 'Login unsuccessful') {
                     self.logger.event('disconnected');
@@ -192,94 +194,95 @@ client.prototype._handleMessage = function _handleMessage(message) {
                 var value = message.params[1] ? message.params[1].split(' ')[2] : message.params.push('');
 
                 switch(true) {
-                /**
-                 * Room is now in subscribers-only mode.
-                 * @event subscriber
-                 * @params {string} channel
-                 * @params {boolean} status
-                 */
                     case (message.params[1] === 'This room is now in subscribers-only mode.'):
+                        /**
+                         * Room is now in subscribers-only mode.
+                         * @event subscriber
+                         * @params {string} channel
+                         * @params {boolean} status
+                         */
                         self.logger.event('subscriber');
                         self.emit('subscriber', message.params[0], true);
                         break;
 
-                /**
-                 * Room is now no longer in subscribers-only mode.
-                 * @event subscriber
-                 * @params {string} channel
-                 * @params {boolean} status
-                 */
                     case (message.params[1] === 'This room is no longer in subscribers-only mode.'):
+                        /**
+                         * Room is now no longer in subscribers-only mode.
+                         * @event subscriber
+                         * @params {string} channel
+                         * @params {boolean} status
+                         */
                         self.logger.event('subscriber');
                         self.emit('subscriber', message.params[0], false);
                         break;
 
-                /**
-                 * Room is now in slow mode.
-                 * @event slowmode
-                 * @params {string} channel
-                 * @params {boolean} status
-                 * @params {string} length
-                 */
                     case (s(message.params[1]).contains('This room is now in slow mode.')):
+                        /**
+                         * Room is now in slow mode.
+                         * @event slowmode
+                         * @params {string} channel
+                         * @params {boolean} status
+                         * @params {string} length
+                         */
                         var parts = message.params[1].split(' ');
                         var length = parts[parts.length - 2];
                         self.logger.event('slowmode');
                         self.emit('slowmode', message.params[0], true, length);
                         break;
 
-                /**
-                 * Room is no longer in slow mode.
-                 * @event slowmode
-                 * @params {string} channel
-                 * @params {boolean} status
-                 */
                     case (message.params[1] === 'This room is no longer in slow mode.'):
+                        /**
+                         * Room is no longer in slow mode.
+                         * @event slowmode
+                         * @params {string} channel
+                         * @params {boolean} status
+                         */
                         self.logger.event('slowmode');
                         self.emit('slowmode', message.params[0], false, -1);
                         break;
 
-                /**
-                 * Room is in r9k mode.
-                 * @event r9kbeta
-                 * @params {string} channel
-                 * @params {boolean} status
-                 */
                     case (message.params[1] === 'This room is now in r9k mode. See http://bit.ly/bGtBDf'):
+                        /**
+                         * Room is in r9k mode.
+                         * @event r9kbeta
+                         * @params {string} channel
+                         * @params {boolean} status
+                         */
                         self.logger.event('r9kbeta');
                         self.emit('r9kbeta', message.params[0], true);
                         break;
 
-                /**
-                 * Room is no longer in r9k mode.
-                 * @event r9kbeta
-                 * @params {string} channel
-                 * @params {boolean} status
-                 */
                     case (message.params[1] === 'This room is no longer in r9k mode.'):
+                        /**
+                         * Room is no longer in r9k mode.
+                         * @event r9kbeta
+                         * @params {string} channel
+                         * @params {boolean} status
+                         */
                         self.logger.event('r9kbeta');
                         self.emit('r9kbeta', message.params[0], false);
                         break;
 
-                /**
-                 * Room is now hosted by someone else.
-                 * @event hosted
-                 * @params {string} username
-                 * @params {string} viewers count
-                 */
                     case (s(message.params[0]).contains('is now hosting you for')):
+                        /**
+                         * Room is now hosted by someone else.
+                         * @event hosted
+                         * @params {string} channel
+                         * @params {string} username
+                         * @params {string} viewers count
+                         */
                         var parts = message.params[0].split(' ');
                         self.logger.event('hosted');
-                        self.emit('hosted', parts[0], parts[6]);
+                        self.emit('hosted', message.params[0], parts[0], parts[6]);
                         break;
 
-                /**
-                 * Room is now hosted by someone else.
-                 * @event mods
-                 * @params {string} channel
-                 * @params {array} mods
-                 */
                     case (s(message.params[1]).contains('The moderators of this room are:')):
+                        /**
+                         * Received mods list on a channel.
+                         * @event mods
+                         * @params {string} channel
+                         * @params {array} mods
+                         */
                         var parts = message.params[1].split(':');
                         var mods = parts[1].replace(/,/g, '').split(':');
                         for (var i = 0; i < mods.length; i++) {
@@ -289,13 +292,13 @@ client.prototype._handleMessage = function _handleMessage(message) {
                         self.emit('mods', message.params[0], mods);
                         break;
 
-                /**
-                 * Encountered some kind of limitation.
-                 * @event limitation
-                 * @params {object} err
-                 */
                     case (message.params[1] === 'Host target cannot be changed more than three times per 30 minutes.') ||
                     message.params[1] === 'UNAUTHORIZED JOIN':
+                        /**
+                         * Encountered some kind of limitation.
+                         * @event limitation
+                         * @params {object} err
+                         */
                         self.logger.event('limitation');
                         var code;
                         if (message.params[1] === 'Host target cannot be changed more than three times per 30 minutes.') { code = 'CANNOT_HOST'; }
@@ -303,13 +306,13 @@ client.prototype._handleMessage = function _handleMessage(message) {
                         self.emit('limitation', {message: message.params[1], code: code});
                         break;
 
-                /**
-                 * Encountered some kind of permission problems.
-                 * @event permission
-                 * @params {object} err
-                 */
                     case (message.params[1] === 'You don\'t have permission to do this.' || s(message.params[1]).contains('Only the owner of this channel can use')) ||
                     message.params[1] === 'You don\'t have permission to timeout people in this room.':
+                        /**
+                         * Encountered some kind of permission problems.
+                         * @event permission
+                         * @params {object} err
+                         */
                         self.logger.event('permission');
                         var code;
                         if (message.params[1] === 'You don\'t have permission to do this.') { code = 'NO_PERMISSION'; }
@@ -318,52 +321,52 @@ client.prototype._handleMessage = function _handleMessage(message) {
                         self.emit('permission', {message: message.params[1], code: code});
                         break;
 
-                /**
-                 * SPECIALUSER message sent by JTV.
-                 * @event specialuser
-                 * @params {string} username
-                 * @params {string} value
-                 */
                     case (message.params[1].split(' ')[0] === 'SPECIALUSER'):
+                        /**
+                         * SPECIALUSER message sent by JTV.
+                         * @event specialuser
+                         * @params {string} username
+                         * @params {string} value
+                         */
                         self.emit('specialuser', username, value);
                         data.createTempUserData(username);
                         data.tempUserData[username].special.push(value);
                         break;
 
-                /**
-                 * USERCOLOR message sent by JTV.
-                 * @event usercolor
-                 * @params {string} username
-                 * @params {string} value
-                 */
                     case (message.params[1].split(' ')[0] === 'USERCOLOR'):
+                        /**
+                         * USERCOLOR message sent by JTV.
+                         * @event usercolor
+                         * @params {string} username
+                         * @params {string} value
+                         */
                         self.emit('usercolor', username, value);
                         data.createTempUserData(username);
                         data.tempUserData[username].color = value;
                         break;
 
-                /**
-                 * EMOTESET message sent by JTV.
-                 * @event emoteset
-                 * @params {string} username
-                 * @params {string} value
-                 */
                     case (message.params[1].split(' ')[0] === 'EMOTESET'):
+                        /**
+                         * EMOTESET message sent by JTV.
+                         * @event emoteset
+                         * @params {string} username
+                         * @params {string} value
+                         */
                         self.emit('emoteset', username, value);
                         data.createTempUserData(username);
                         data.tempUserData[username].emote = value;
                         break;
 
-                /**
-                 * CLEARCHAT message sent by JTV.
-                 * @event clearchat
-                 * @params {string} channel
-                 *
-                 * @event timeout
-                 * @params {string} channel
-                 * @params {string} username
-                 */
                     case (message.params[1].split(' ')[0] === 'CLEARCHAT'):
+                        /**
+                         * CLEARCHAT message sent by JTV.
+                         * @event clearchat
+                         * @params {string} channel
+                         *
+                         * @event timeout
+                         * @params {string} channel
+                         * @params {string} username
+                         */
                         if (username) {
                             self.logger.event('timeout');
                             self.emit('timeout', message.params[0], username);
@@ -374,63 +377,59 @@ client.prototype._handleMessage = function _handleMessage(message) {
                         }
                         break;
 
-                /**
-                 * ROOMBAN message sent by JTV.
-                 * @event roomban
-                 * @params {string} room
-                 * @params {string} username
-                 */
                     case (message.params[1].split(' ')[0] === 'ROOMBAN'):
+                        /**
+                         * ROOMBAN message sent by JTV.
+                         * @event roomban
+                         * @params {string} room
+                         * @params {string} username
+                         */
                         self.emit('roomban', message.params[0], username);
                         break;
 
-                /**
-                 * ROOMCHANGED message sent by JTV.
-                 * @event roomchanged
-                 * @params {string} channel
-                 */
                     case (message.params[1].split(' ')[0] === 'ROOMCHANGED'):
+                        /**
+                         * ROOMCHANGED message sent by JTV.
+                         * @event roomchanged
+                         * @params {string} channel
+                         */
                         self.emit('roomchanged', message.params[0]);
                         break;
 
-                /**
-                 * ROOMDELETED message sent by JTV.
-                 * @event roomdeleted
-                 * @params {string} room
-                 */
                     case (message.params[1].split(' ')[0] === 'ROOMDELETED'):
+                        /**
+                         * ROOMDELETED message sent by JTV.
+                         * @event roomdeleted
+                         * @params {string} room
+                         */
                         self.emit('roomdeleted', message.params[0]);
                         break;
 
-                /**
-                 * ROOMINVITE message sent by JTV.
-                 * @event roominvite
-                 * @params {string} room
-                 * @params {string} by username
-                 */
                     case (message.params[1].split(' ')[0] === 'ROOMINVITE'):
+                        /**
+                         * ROOMINVITE message sent by JTV.
+                         * @event roominvite
+                         * @params {string} room
+                         * @params {string} by username
+                         */
                         self.emit('roominvite', message.params[0], username);
                         break;
 
-                /**
-                 * HISTORYEND message sent by JTV.
-                 */
                     case (message.params[1].split(' ')[0] === 'HISTORYEND'):
-                        // Hmm.
                         break;
 
-                /**
-                 * HOSTTARGET message sent by JTV.
-                 * @event unhost
-                 * @params {string} channel
-                 * @params {string} remains
-                 *
-                 * @event hosting
-                 * @params {string} channel
-                 * @params {string} target
-                 * @params {string} remains
-                 */
                     case (message.params[1].split(' ')[0] === 'HOSTTARGET'):
+                        /**
+                         * HOSTTARGET message sent by JTV.
+                         * @event unhost
+                         * @params {string} channel
+                         * @params {string} remains
+                         *
+                         * @event hosting
+                         * @params {string} channel
+                         * @params {string} target
+                         * @params {string} remains
+                         */
                         if (message.params[1].split(' ')[1] === '-') {
                             self.logger.event('unhost');
                             self.emit('unhost', message.params[0], message.params[1].split(' ')[2]);
@@ -449,19 +448,20 @@ client.prototype._handleMessage = function _handleMessage(message) {
             /**
              * Received a message from TwitchNotify.
              * @event twitchnotify
+             * @params {string} channel
              * @params {string} message
              */
             else if (messageFrom === 'twitchnotify') {
-                self.emit('twitchnotify', message.params);
+                self.emit('twitchnotify', message.params[0], message.params[1]);
 
                 switch(true) {
-                /**
-                 * Someone has subscribed to a channel.
-                 * @event subscription
-                 * @params {string} channel
-                 * @params {string} username
-                 */
                     case (s(message.params[1]).contains('just subscribed!')):
+                        /**
+                         * Someone has subscribed to a channel.
+                         * @event subscription
+                         * @params {string} channel
+                         * @params {string} username
+                         */
                         self.logger.event('subscription');
                         self.emit('subscription', message.params[0], message.params[1].split(' ')[0]);
                         break;
@@ -719,5 +719,80 @@ client.prototype.mods = function mods(channel) {
     if (!s(channel).startsWith('#')) { channel = '#'+channel; }
     this.socket.crlfWrite('PRIVMSG '+channel.toLowerCase()+ ' :.mods');
 };
+
+client.prototype.db = {
+    /**
+     * Insert/add/push a list of elements.
+     * @params {string} collection
+     * @params {object} elements
+     */
+    insert: function insert(collection, elements) {
+        var collection = db.collection(collection);
+        collection.insert(elements);
+        collection.save();
+        return true;
+    },
+    /**
+     * Retrieve elements.
+     * @params {string} collection
+     * @params {query} query
+     */
+    where: function where(collection, query) {
+        var collection = db.collection(collection);
+        return collection.where(query);
+    },
+    /**
+     * Retrieve by cid.
+     * @params {string} collection
+     * @params {integer} cid
+     */
+    get: function get(collection, cid) {
+        var collection = db.collection(collection);
+        return collection.get(cid);
+    },
+    /**
+     * List all elements in the collection.
+     * @params {string} collection
+     */
+    list: function list(collection) {
+        var collection = db.collection(collection);
+        return collection.list;
+    },
+    /**
+     * Update an element, it will add un-exsited key and replace existed.
+     * @params {string} collection
+     * @params {integer} cid
+     * @params {object} object
+     */
+    update: function update(collection, cid, object) {
+        var collection = db.collection(collection);
+        collection.update(cid, object);
+        collection.save();
+        return true;
+    },
+    /**
+     * Replace the element with the same cid.
+     * @params {string} collection
+     * @params {integer} cid
+     * @params {object} object
+     */
+    replace: function replace(collection, cid, object) {
+        var collection = db.collection(collection);
+        collection.replace(cid, object);
+        collection.save();
+        return true;
+    },
+    /**
+     * Delete an item by cid.
+     * @params {string} collection
+     * @params {integer} cid
+     */
+    remove: function remove(collection, cid) {
+        var collection = db.collection(collection);
+        collection.remove(cid);
+        collection.save();
+        return true;
+    }
+}
 
 module.exports = client;
