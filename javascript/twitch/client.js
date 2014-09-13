@@ -42,6 +42,8 @@ var s = require('string');
 var locallydb = require('locallydb');
 var db = new locallydb('./database');
 
+var lag = new Date();
+
 /**
  * Represents a new IRC client.
  * @constructor
@@ -122,11 +124,11 @@ client.prototype._handleMessage = function _handleMessage(message) {
 
         case 'PONG':
             /**
-             * Received PONG from server.
+             * Received PONG from server, return current latency.
              * @event pong
              */
             self.logger.event('pong');
-            self.emit('pong');
+            self.emit('pong', (((new Date()-lag)/1000)%60));
             break;
 
         case '372':
@@ -286,7 +288,7 @@ client.prototype._handleMessage = function _handleMessage(message) {
                         var parts = message.params[1].split(':');
                         var mods = parts[1].replace(/,/g, '').split(':');
                         for (var i = 0; i < mods.length; i++) {
-                            mods[i] = mods[i]..toLowerCase().trim();
+                            mods[i] = mods[i].toLowerCase().trim();
                         }
                         self.logger.event('mods');
                         self.emit('mods', message.params[0], mods);
@@ -552,6 +554,7 @@ client.prototype.part = function part(channel) {
  */
 client.prototype.ping = function ping() {
     this.socket.crlfWrite('PING');
+    lag = new Date();
 };
 
 /**
