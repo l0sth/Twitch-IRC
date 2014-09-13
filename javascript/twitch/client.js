@@ -152,7 +152,7 @@ client.prototype._handleMessage = function _handleMessage(message) {
              * @params {string} username
              */
             self.logger.event('join');
-            self.emit('join', message.params[0], message.parseHostmaskFromPrefix().nickname);
+            self.emit('join', message.params[0], message.parseHostmaskFromPrefix().nickname.toLowerCase());
             break;
 
         case 'PART':
@@ -163,7 +163,7 @@ client.prototype._handleMessage = function _handleMessage(message) {
              * @params {string} username
              */
             self.logger.event('part');
-            self.emit('part', message.params[0], message.parseHostmaskFromPrefix().nickname);
+            self.emit('part', message.params[0], message.parseHostmaskFromPrefix().nickname.toLowerCase());
             break;
 
         case 'NOTICE':
@@ -286,7 +286,7 @@ client.prototype._handleMessage = function _handleMessage(message) {
                         var parts = message.params[1].split(':');
                         var mods = parts[1].replace(/,/g, '').split(':');
                         for (var i = 0; i < mods.length; i++) {
-                            mods[i] = mods[i].trim();
+                            mods[i] = mods[i]..toLowerCase().trim();
                         }
                         self.logger.event('mods');
                         self.emit('mods', message.params[0], mods);
@@ -484,7 +484,7 @@ client.prototype._handleMessage = function _handleMessage(message) {
              * @params {string} message
              */
             else {
-                var username = message.parseHostmaskFromPrefix().nickname;
+                var username = message.parseHostmaskFromPrefix().nickname.toLowerCase();
                 data.createChannelUserData(message.params[0], username, function(done) {
                     if (s(message.params[1]).startsWith('\u0001ACTION')) {
                         self.emit('action', message.params[0], data.channelUserData[message.params[0]][username], s(message.params[1]).between('\u0001ACTION ', '\u0001'));
