@@ -128,7 +128,10 @@ client.prototype._handleMessage = function _handleMessage(message) {
              */
             self.logger.event('connected');
             self.emit('connected', self.socket.remoteAddress, self.socket.remotePort);
-            self.socket.crlfWrite('TWITCHCLIENT 3');
+
+            var twitchClient = self.options.tc ? self.options.tc : 3;
+            self.socket.crlfWrite('TWITCHCLIENT '+twitchClient);
+
             var timer = 0;
             self.options.channels.forEach(function(channel) {
                 setTimeout(function(){self.join(channel);}, timer);
