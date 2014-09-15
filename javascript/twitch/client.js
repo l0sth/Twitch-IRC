@@ -36,6 +36,7 @@ var lag = new Date();
 
 /**
  * Represents a new IRC client.
+ *
  * @constructor
  * @param {object} options
  */
@@ -63,6 +64,7 @@ util.inherits(client, events.EventEmitter);
 
 /**
  * Handle all IRC messages.
+ * Documentation: https://github.com/Schmoopiie/generator-twitch-irc/blob/master/EVENTS.md
  *
  * @fires client#ping
  * @fires client#pong
@@ -105,6 +107,7 @@ client.prototype._handleMessage = function _handleMessage(message) {
         case 'PING':
             /**
              * Received PING from server.
+             *
              * @event ping
              */
             self.logger.event('ping');
@@ -115,6 +118,7 @@ client.prototype._handleMessage = function _handleMessage(message) {
         case 'PONG':
             /**
              * Received PONG from server, return current latency.
+             *
              * @event pong
              */
             self.logger.event('pong');
@@ -123,7 +127,8 @@ client.prototype._handleMessage = function _handleMessage(message) {
 
         case '372':
             /**
-             * Received MOTD from server.
+             * Received MOTD from server, it means that we are connected.
+             *
              * @event connected
              */
             self.logger.event('connected');
@@ -142,6 +147,8 @@ client.prototype._handleMessage = function _handleMessage(message) {
         case 'JOIN':
             /**
              * User has joined a channel.
+             * Depending on the TWITCHCLIENT setting, it can return only the bot or any user joining.
+             *
              * @event join
              * @params {string} channel
              * @params {string} username
@@ -153,6 +160,8 @@ client.prototype._handleMessage = function _handleMessage(message) {
         case 'PART':
             /**
              * User has left a channel.
+             * Depending on the TWITCHCLIENT setting, it can return only the bot or any user leaving.
+             *
              * @event part
              * @params {string} channel
              * @params {string} username
@@ -164,6 +173,7 @@ client.prototype._handleMessage = function _handleMessage(message) {
         case 'NOTICE':
             /**
              * Received a notice from the server.
+             *
              * @event disconnected
              * @params {string} reason
              */
@@ -179,6 +189,8 @@ client.prototype._handleMessage = function _handleMessage(message) {
         case 'PRIVMSG':
             /**
              * Received a message from JTV.
+             * JTV sends a lot of messages, this is the goal of this library.. make it simple.
+             *
              * @event jtv
              * @params {string} message
              */
@@ -192,6 +204,7 @@ client.prototype._handleMessage = function _handleMessage(message) {
                     case (message.params[1] === 'This room is now in subscribers-only mode.'):
                         /**
                          * Room is now in subscribers-only mode.
+                         *
                          * @event subscriber
                          * @params {string} channel
                          * @params {boolean} status
@@ -203,6 +216,7 @@ client.prototype._handleMessage = function _handleMessage(message) {
                     case (message.params[1] === 'This room is no longer in subscribers-only mode.'):
                         /**
                          * Room is now no longer in subscribers-only mode.
+                         *
                          * @event subscriber
                          * @params {string} channel
                          * @params {boolean} status
@@ -214,6 +228,7 @@ client.prototype._handleMessage = function _handleMessage(message) {
                     case (s(message.params[1]).contains('This room is now in slow mode.')):
                         /**
                          * Room is now in slow mode.
+                         *
                          * @event slowmode
                          * @params {string} channel
                          * @params {boolean} status
@@ -228,6 +243,7 @@ client.prototype._handleMessage = function _handleMessage(message) {
                     case (message.params[1] === 'This room is no longer in slow mode.'):
                         /**
                          * Room is no longer in slow mode.
+                         *
                          * @event slowmode
                          * @params {string} channel
                          * @params {boolean} status
@@ -239,6 +255,7 @@ client.prototype._handleMessage = function _handleMessage(message) {
                     case (message.params[1] === 'This room is now in r9k mode. See http://bit.ly/bGtBDf'):
                         /**
                          * Room is in r9k mode.
+                         *
                          * @event r9kbeta
                          * @params {string} channel
                          * @params {boolean} status
@@ -250,6 +267,7 @@ client.prototype._handleMessage = function _handleMessage(message) {
                     case (message.params[1] === 'This room is no longer in r9k mode.'):
                         /**
                          * Room is no longer in r9k mode.
+                         *
                          * @event r9kbeta
                          * @params {string} channel
                          * @params {boolean} status
@@ -260,7 +278,8 @@ client.prototype._handleMessage = function _handleMessage(message) {
 
                     case (s(message.params[0]).contains('is now hosting you for')):
                         /**
-                         * Room is now hosted by someone else.
+                         * Room is now hosted by another user.
+                         *
                          * @event hosted
                          * @params {string} channel
                          * @params {string} username
@@ -274,6 +293,8 @@ client.prototype._handleMessage = function _handleMessage(message) {
                     case (s(message.params[1]).contains('The moderators of this room are:')):
                         /**
                          * Received mods list on a channel.
+                         * The client needs to send the /mods command to a channel to receive this message.
+                         *
                          * @event mods
                          * @params {string} channel
                          * @params {array} mods
@@ -290,7 +311,9 @@ client.prototype._handleMessage = function _handleMessage(message) {
                     case (message.params[1] === 'Host target cannot be changed more than three times per 30 minutes.') ||
                     message.params[1] === 'UNAUTHORIZED JOIN':
                         /**
-                         * Encountered some kind of limitation.
+                         * Limitation by Twitch.
+                         * The only limitation at this time is a limit of hosting. You can only host 3 channels in 30 minutes.
+                         *
                          * @event limitation
                          * @params {object} err
                          */
@@ -304,7 +327,9 @@ client.prototype._handleMessage = function _handleMessage(message) {
                     case (message.params[1] === 'You don\'t have permission to do this.' || s(message.params[1]).contains('Only the owner of this channel can use')) ||
                     message.params[1] === 'You don\'t have permission to timeout people in this room.':
                         /**
-                         * Encountered some kind of permission problems.
+                         * Permission error by Twitch.
+                         * You will receive a permission error message when you have insufficient access.
+                         *
                          * @event permission
                          * @params {object} err
                          */
@@ -318,7 +343,10 @@ client.prototype._handleMessage = function _handleMessage(message) {
 
                     case (message.params[1].split(' ')[0] === 'SPECIALUSER'):
                         /**
-                         * SPECIALUSER message sent by JTV.
+                         * SPECIALUSER message by JTV.
+                         * This message contains the status of a user on a channel.
+                         * e.g: turbo, staff, moderator, admin
+                         *
                          * @event specialuser
                          * @params {string} username
                          * @params {string} value
@@ -330,7 +358,10 @@ client.prototype._handleMessage = function _handleMessage(message) {
 
                     case (message.params[1].split(' ')[0] === 'USERCOLOR'):
                         /**
-                         * USERCOLOR message sent by JTV.
+                         * USERCOLOR message by JTV.
+                         * This message contains the color of a user on a channel.
+                         * e.g: #ffffff
+                         *
                          * @event usercolor
                          * @params {string} username
                          * @params {string} value
@@ -342,7 +373,10 @@ client.prototype._handleMessage = function _handleMessage(message) {
 
                     case (message.params[1].split(' ')[0] === 'EMOTESET'):
                         /**
-                         * EMOTESET message sent by JTV.
+                         * EMOTESET message by JTV.
+                         * This message contains the emotes of a user on a channel.
+                         * e.g: [23,568,4458]
+                         *
                          * @event emoteset
                          * @params {string} username
                          * @params {string} value
@@ -354,7 +388,9 @@ client.prototype._handleMessage = function _handleMessage(message) {
 
                     case (message.params[1].split(' ')[0] === 'CLEARCHAT'):
                         /**
-                         * CLEARCHAT message sent by JTV.
+                         * CLEARCHAT message by JTV.
+                         * CLEARCHAT is used when a chat is cleared and when a user gets timed out.
+                         *
                          * @event clearchat
                          * @params {string} channel
                          *
@@ -374,7 +410,10 @@ client.prototype._handleMessage = function _handleMessage(message) {
 
                     case (message.params[1].split(' ')[0] === 'ROOMBAN'):
                         /**
-                         * ROOMBAN message sent by JTV.
+                         * ROOMBAN message by JTV.
+                         * There is no documentation about this from Twitch.
+                         * Will try to figure this out later.
+                         *
                          * @event roomban
                          * @params {string} room
                          * @params {string} username
@@ -384,7 +423,10 @@ client.prototype._handleMessage = function _handleMessage(message) {
 
                     case (message.params[1].split(' ')[0] === 'ROOMCHANGED'):
                         /**
-                         * ROOMCHANGED message sent by JTV.
+                         * ROOMCHANGED message by JTV.
+                         * There is no documentation about this from Twitch.
+                         * Will try to figure this out later.
+                         *
                          * @event roomchanged
                          * @params {string} channel
                          */
@@ -393,7 +435,10 @@ client.prototype._handleMessage = function _handleMessage(message) {
 
                     case (message.params[1].split(' ')[0] === 'ROOMDELETED'):
                         /**
-                         * ROOMDELETED message sent by JTV.
+                         * ROOMDELETED message by JTV.
+                         * There is no documentation about this from Twitch.
+                         * Will try to figure this out later.
+                         *
                          * @event roomdeleted
                          * @params {string} room
                          */
@@ -402,7 +447,10 @@ client.prototype._handleMessage = function _handleMessage(message) {
 
                     case (message.params[1].split(' ')[0] === 'ROOMINVITE'):
                         /**
-                         * ROOMINVITE message sent by JTV.
+                         * ROOMINVITE message by JTV.
+                         * There is no documentation about this from Twitch.
+                         * Will try to figure this out later.
+                         *
                          * @event roominvite
                          * @params {string} room
                          * @params {string} by username
@@ -415,7 +463,9 @@ client.prototype._handleMessage = function _handleMessage(message) {
 
                     case (message.params[1].split(' ')[0] === 'HOSTTARGET'):
                         /**
-                         * HOSTTARGET message sent by JTV.
+                         * HOSTTARGET message by JTV.
+                         * HOSTTARGET is used when a channel starts and ends a hosting.
+                         *
                          * @event unhost
                          * @params {string} channel
                          * @params {string} remains
@@ -442,6 +492,8 @@ client.prototype._handleMessage = function _handleMessage(message) {
 
             /**
              * Received a message from TwitchNotify.
+             * For now, TwitchNotify is only used to send subscription messages.
+             *
              * @event twitchnotify
              * @params {string} channel
              * @params {string} message
@@ -453,6 +505,7 @@ client.prototype._handleMessage = function _handleMessage(message) {
                     case (s(message.params[1]).contains('just subscribed!')):
                         /**
                          * Someone has subscribed to a channel.
+                         *
                          * @event subscription
                          * @params {string} channel
                          * @params {string} username
@@ -468,6 +521,8 @@ client.prototype._handleMessage = function _handleMessage(message) {
 
             /**
              * Someone has sent a message on a channel.
+             * There are two kinds of messages, regular messages and action messages. (/me <message>)
+             *
              * @event action
              * @params {string} channel
              * @params {object} user
@@ -494,6 +549,7 @@ client.prototype._handleMessage = function _handleMessage(message) {
 
 /**
  * Connect to the server.
+ *
  * @params callback
  * @fires connect#logon
  */
@@ -526,6 +582,7 @@ client.prototype.connect = function connect(callback) {
 
 /**
  * Join a channel.
+ *
  * @params {string} channel
  */
 client.prototype.join = function join(channel) {
@@ -535,6 +592,7 @@ client.prototype.join = function join(channel) {
 
 /**
  * Leave a channel.
+ *
  * @params {string} channel
  */
 client.prototype.part = function part(channel) {
@@ -552,6 +610,7 @@ client.prototype.ping = function ping() {
 
 /**
  * Say something on a channel.
+ *
  * @params {string} channel
  * @params {string} message
  */
@@ -561,7 +620,8 @@ client.prototype.say = function say(channel, message) {
 };
 
 /**
- * Host a channel.
+ * Hosting a channel.
+ *
  * @params {string} channel
  * @params {string} target
  */
@@ -571,7 +631,8 @@ client.prototype.host = function host(channel, target) {
 };
 
 /**
- * Unhost.
+ * Cancel the current hosting.
+ *
  * @params {string} channel
  */
 client.prototype.unhost = function unhost(channel) {
@@ -580,7 +641,8 @@ client.prototype.unhost = function unhost(channel) {
 };
 
 /**
- * Timeout a username on a channel for X seconds.
+ * Timeout user on a channel for X seconds.
+ *
  * @params {string} channel
  * @params {string} username
  * @params {integer} seconds
@@ -592,7 +654,8 @@ client.prototype.timeout = function timeout(channel, username, seconds) {
 };
 
 /**
- * Ban a username on a channel.
+ * Ban user on a channel.
+ *
  * @params {string} channel
  * @params {string} username
  */
@@ -602,7 +665,8 @@ client.prototype.ban = function ban(channel, username) {
 };
 
 /**
- * Unban a username on a channel.
+ * Unban user on a channel.
+ *
  * @params {string} channel
  * @params {string} username
  */
@@ -613,6 +677,7 @@ client.prototype.unban = function unban(channel, username) {
 
 /**
  * Enable slow mode on a channel.
+ *
  * @params {string} channel
  * @params {integer} seconds
  */
@@ -623,7 +688,8 @@ client.prototype.slow = function slow(channel, seconds) {
 };
 
 /**
- * Disable the slow mode on a channel.
+ * Disable slow mode on a channel.
+ *
  * @params {string} channel
  */
 client.prototype.slowoff = function slowoff(channel) {
@@ -633,6 +699,7 @@ client.prototype.slowoff = function slowoff(channel) {
 
 /**
  * Enable subscriber-only on a channel.
+ *
  * @params {string} channel
  */
 client.prototype.subscribers = function subscribers(channel) {
@@ -642,6 +709,7 @@ client.prototype.subscribers = function subscribers(channel) {
 
 /**
  * Disable subscriber-only on a channel.
+ *
  * @params {string} channel
  */
 client.prototype.subscribersoff = function subscribersoff(channel) {
@@ -650,7 +718,8 @@ client.prototype.subscribersoff = function subscribersoff(channel) {
 };
 
 /**
- * Clear all the messages on a channel.
+ * Clear all messages on a channel.
+ *
  * @params {string} channel
  */
 client.prototype.clear = function clear(channel) {
@@ -660,6 +729,7 @@ client.prototype.clear = function clear(channel) {
 
 /**
  * Enable R9KBeta on a channel.
+ *
  * @params {string} channel
  */
 client.prototype.r9kbeta = function r9kbeta(channel) {
@@ -669,6 +739,7 @@ client.prototype.r9kbeta = function r9kbeta(channel) {
 
 /**
  * Disable R9KBeta on a channel.
+ *
  * @params {string} channel
  */
 client.prototype.r9kbetaoff = function r9kbetaoff(channel) {
@@ -677,7 +748,8 @@ client.prototype.r9kbetaoff = function r9kbetaoff(channel) {
 };
 
 /**
- * Mod a username on a channel.
+ * Mod user on a channel.
+ *
  * @params {string} channel
  * @params {string} username
  */
@@ -687,7 +759,8 @@ client.prototype.mod = function mod(channel, username) {
 };
 
 /**
- * Unmod a username on a channel.
+ * Unmod user on a channel.
+ *
  * @params {string} channel
  * @params {string} username
  */
@@ -697,7 +770,8 @@ client.prototype.unmod = function mod(channel, username) {
 };
 
 /**
- * Show a commercial on a channel for X seconds.
+ * Display commercial on a channel for X seconds.
+ *
  * @params {string} channel
  * @params {integer} seconds
  */
@@ -709,6 +783,8 @@ client.prototype.commercial = function commercial(channel, seconds) {
 
 /**
  * Get all the mods on a channel.
+ * Use the 'mods' event to get the list of mods.
+ *
  * @params {string} channel
  */
 client.prototype.mods = function mods(channel) {
@@ -719,6 +795,7 @@ client.prototype.mods = function mods(channel) {
 client.prototype.db = {
     /**
      * Insert/add/push a list of elements.
+     *
      * @params {string} collection
      * @params {object} elements
      */
@@ -730,6 +807,7 @@ client.prototype.db = {
     },
     /**
      * Retrieve elements.
+     *
      * @params {string} collection
      * @params {query} query
      */
@@ -739,6 +817,7 @@ client.prototype.db = {
     },
     /**
      * Retrieve by cid.
+     *
      * @params {string} collection
      * @params {integer} cid
      */
@@ -748,6 +827,7 @@ client.prototype.db = {
     },
     /**
      * List all elements in the collection.
+     *
      * @params {string} collection
      */
     list: function list(collection) {
@@ -755,7 +835,8 @@ client.prototype.db = {
         return collection.list;
     },
     /**
-     * Update an element, it will add un-exsited key and replace existed.
+     * Update an element, it will add un-existed key and replace existed.
+     *
      * @params {string} collection
      * @params {integer} cid
      * @params {object} object
@@ -768,6 +849,7 @@ client.prototype.db = {
     },
     /**
      * Replace the element with the same cid.
+     *
      * @params {string} collection
      * @params {integer} cid
      * @params {object} object
@@ -780,6 +862,7 @@ client.prototype.db = {
     },
     /**
      * Delete an item by cid.
+     *
      * @params {string} collection
      * @params {integer} cid
      */
