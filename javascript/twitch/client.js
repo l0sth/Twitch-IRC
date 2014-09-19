@@ -620,7 +620,7 @@ client.prototype.say = function say(channel, message) {
 };
 
 /**
- * Hosting a channel.
+ * Host a channel.
  *
  * @params {string} channel
  * @params {string} target
@@ -631,7 +631,7 @@ client.prototype.host = function host(channel, target) {
 };
 
 /**
- * Cancel the current hosting.
+ * End the current hosting.
  *
  * @params {string} channel
  */
@@ -770,7 +770,7 @@ client.prototype.unmod = function mod(channel, username) {
 };
 
 /**
- * Display commercial on a channel for X seconds.
+ * Run commercial on a channel for X seconds.
  *
  * @params {string} channel
  * @params {integer} seconds
@@ -778,6 +778,8 @@ client.prototype.unmod = function mod(channel, username) {
 client.prototype.commercial = function commercial(channel, seconds) {
     if (!s(channel).startsWith('#')) { channel = '#'+channel; }
     seconds = typeof seconds !== 'undefined' ? seconds : 30;
+    var availableLengths = [30, 60, 90, 120, 150, 180];
+    if (availableLengths.indexOf(seconds) === -1) { seconds = 30; }
     this.socket.crlfWrite('PRIVMSG '+channel.toLowerCase()+ ' :.commercial '+seconds);
 };
 
