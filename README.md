@@ -4,7 +4,7 @@
 Twitch is a trademark or registered trademark of Twitch Interactive, Inc. in the U.S. and/or other countries. "Twitch-IRC" is not operated by, sponsored by, or affiliated with Twitch Interactive, Inc. in any way.
 
 ## Usage
-Please, check [generator-twitch-irc](https://github.com/Schmoopiie/generator-twitch-irc/) instead. This repository is being downloaded by the generator. Send any issues regarding this library [here](https://github.com/Schmoopiie/generator-twitch-irc/issues).
+Please, check [generator-twitch-irc](https://github.com/Schmoopiie/generator-twitch-irc/) instead. This repository is being downloaded by the generator. [Click here to report an issue](https://github.com/Schmoopiie/generator-twitch-irc/issues).
 
 ## License
 
