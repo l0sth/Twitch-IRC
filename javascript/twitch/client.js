@@ -300,10 +300,7 @@ client.prototype._handleMessage = function _handleMessage(message) {
                          * @params {array} mods
                          */
                         var parts = message.params[1].split(':');
-                        var mods = parts[1].replace(/,/g, '').split(':');
-                        for (var i = 0; i < mods.length; i++) {
-                            mods[i] = mods[i].toLowerCase().trim();
-                        }
+                        var mods = parts[1].replace(/,/g, '').split(':').toString().toLowerCase().split(' ');
                         self.logger.event('mods');
                         self.emit('mods', message.params[0], mods);
                         break;
