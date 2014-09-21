@@ -1,74 +1,10 @@
-**WORK IN PROGRESS**
-
-This is a work in progress. There is no documentation available yet.
-
 ## Twitch-IRC [![Build Status](https://secure.travis-ci.org/Schmoopiie/generator-twitch-irc.png?branch=master)](https://travis-ci.org/Schmoopiie/generator-twitch-irc)
 
 ![](http://i.imgur.com/7PMEvN5.png)
 Twitch is a trademark or registered trademark of Twitch Interactive, Inc. in the U.S. and/or other countries. "Twitch-IRC" is not operated by, sponsored by, or affiliated with Twitch Interactive, Inc. in any way.
 
-### Getting Started
-
-You must download Twitch-IRC using Yeoman Generator. Please visit [generator-twitch-irc](https://github.com/Schmoopiie/generator-twitch-irc) to get started.
-
-**Events**
-```
-- Action
-- Chat
-- Clearchat
-- Connected
-- Connectfail
-- Connecting
-- Crash
-- Disconnected
-- Emoteset
-- Hosted
-- Hosting
-- Join
-- Limitation
-- Logon
-- Mods
-- Part
-- Permission
-- Ping
-- Pong
-- R9KBeta
-- Roomban
-- Roomchanged
-- Roomdeleted
-- Roominvite
-- Slowmode
-- Specialuser
-- Subscriber
-- Subscription
-- Timeout
-- Unhost
-- Usercolor
-```
-
-**Commands**
-```
-- Ban
-- Clear
-- Commercial
-- Host
-- Join
-- Mod
-- Mods
-- Part
-- Ping
-- R9KBeta
-- R9KBetaoff
-- Say
-- Slow
-- Slowoff
-- Subscribers
-- Subscribersoff
-- Timeout
-- Unban
-- Unhost
-- Unmod
-```
+## Usage
+Please, check [generator-twitch-irc](https://github.com/Schmoopiie/generator-twitch-irc/) instead. This repository is being downloaded by the generator.
 
 ## License
 
